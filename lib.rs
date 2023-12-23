@@ -53,6 +53,14 @@ mod scooby {
         }
 
         #[ink(message)]
+        pub fn scooby_withdraw(&mut self, ) {
+            let caller = self.env().account_id();
+            let balances = self.balances.get(caller).unwrap();
+            self.balances.remove(caller);
+            self.env().transfer(caller, balances).unwrap();
+        }
+
+        #[ink(message)]
         pub fn scooby_balance(&self) -> u128 {
             let scooby = self.env().caller();
             let sbalance = self.balances.get(scooby).unwrap_or(0);
