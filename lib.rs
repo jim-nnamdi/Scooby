@@ -53,6 +53,11 @@ mod scooby {
         }
 
         #[ink(message)]
+        pub fn get(&self) {
+            Scooby::default();
+        }
+
+        #[ink(message)]
         pub fn scooby_withdraw(&mut self, ) {
             let caller = self.env().account_id();
             let balances = self.balances.get(caller).unwrap();
@@ -67,6 +72,18 @@ mod scooby {
             sbalance
         }
 
+        #[ink(message)]
+        pub fn get_valid_datahash(&self, rawdata:Vec<u8>) -> Option<Vec<u8>> {
+            let scooby_constructor = Scooby::new(rawdata);
+            let hash_from_constructor = scooby_constructor.datahash;
+            Some(hash_from_constructor)
+        }
+
+        pub fn match_valid_scooby(&self, rawdata:Vec<u8>) -> Option<Self> {
+            let scooby_new_from_constructor = Self::new(rawdata);
+            Some(scooby_new_from_constructor)
+        }
+
     }
 
     /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
@@ -78,21 +95,19 @@ mod scooby {
         use super::*;
 
         /// We test if the default constructor does its job.
-        // #[ink::test]
-        // fn default_works() {
-        //     let scooby = Scooby::default();
-        //     assert_eq!(scooby.get(), false);
-        // }
+        #[ink::test]
+        fn default_works() {
+            let scooby = Scooby::default();
+            assert_eq!(scooby.scooby_balance(), 0);
+        }
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
+            let scp_data = "data".to_string().as_bytes().to_vec();
+            let scooby = Scooby::new(scp_data.clone());
+            assert_eq!(scooby.get_valid_datahash(scp_data), Some(scooby.datahash));
         }
-        //     let mut scooby = Scooby::new(false);
-        //     assert_eq!(scooby.get(), false);
-        //     scooby.flip();
-        //     assert_eq!(scooby.get(), true);
-        // }
     }
 
 
