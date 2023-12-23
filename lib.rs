@@ -41,9 +41,15 @@ mod scooby {
             scooby_resp
         }
 
-        #[ink(message)]
-        pub fn get(&self){
-            
+        #[ink(message, payable)]
+        pub fn validate_data_and_transfer(&mut self, ext_data:Vec<u8>) {
+            let caller = self.env().caller();
+            let balance = self.balances.get(caller).unwrap_or(0);
+            let val_data = self.datahash == ext_data;
+            let tx_val = self.env().transferred_value();
+            if balance > tx_val && val_data {
+                self.balances.insert(caller, &(balance + tx_val));
+            }
         }
 
         #[ink(message)]
