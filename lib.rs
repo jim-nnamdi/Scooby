@@ -1,5 +1,9 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
+
+mod filemap;
+mod scoob;
+
 #[ink::contract]
 mod scooby {
 
